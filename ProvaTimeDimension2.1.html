@@ -1,0 +1,134 @@
+<html>
+
+<head>
+    <title>Leaflet TimeDimension Demo</title>
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css" /> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css" />
+    <!-- <link rel="stylesheet" href="https://cdn.rawgit.com/socib/Leaflet.TimeDimension/master/dist/leaflet.timedimension.control.min.css"/> -->
+    <link rel="stylesheet" href="css/leaflet.timedimension.control.css" />
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- Treballar en CANVAS millora el rendiment. És un métode per rasteritzar les geometries -->
+    <!-- <script>
+        L_PREFER_CANVAS = true; 
+    </script> -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.js"></script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/nezasa/iso8601-js-period/master/iso8601.min.js"></script>
+    <!-- <script type="text/javascript" src="https://cdn.rawgit.com/socib/Leaflet.TimeDimension/master/dist/leaflet.timedimension.min.js"></script> -->
+    <!-- <script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script> -->
+
+    <script type="text/javascript" src="js/leaflet.timedimension.js"></script>
+    <script type="text/javascript" src="js/leaflet.timedimension.util.js"></script>
+    <script type="text/javascript" src="js/leaflet.timedimension.layer.js"></script>
+    <script type="text/javascript" src="js/leaflet.timedimension.layer.geojson.js"></script>
+    <script type="text/javascript" src="js/leaflet.timedimension.player.js"></script>
+    <script type="text/javascript" src="js/leaflet.timedimension.control.js"></script>
+    <script type="text/javascript" src="js/leaflet-omnivore.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            var map = L.map('map', {
+                zoom: 13,
+                center: [41.309465, 0.987381],
+                // timeDimension: true,
+                // timeDimensionControl: true,
+            });
+
+            var esri = L.tileLayer(
+                'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                    maxZoom: 17,
+                    minZoom: 1,
+                    attribution: 'Tiles © Esri',
+                })
+
+            var osm = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                minZoom: 1,
+                attribution: 'OSM'
+            }).addTo(map);
+
+
+            var baseLayers = {
+                "Orto_esri": esri,
+                "Mapa_osm": osm
+            };
+
+            var startDate = new Date();
+            startDate.setUTCHours(0, 0, 0, 0);
+
+            var timeDimension = new L.TimeDimension({
+                period: "PT1M",
+            });
+
+            map.timeDimension = timeDimension;
+
+            var player = new L.TimeDimension.Player({
+                transitionTime: 100,
+                loop: false,
+                startOver: true
+            }, timeDimension);
+
+            var timeDimensionControlOptions = {
+                player: player,
+                timeDimension: timeDimension,
+                position: 'bottomleft',
+                autoPlay: true,
+                minSpeed: 1,
+                speedStep: 0.5,
+                maxSpeed: 15,
+                timeSliderDragUpdate: true
+            };
+
+            var timeDimensionControl = new L.Control.TimeDimension(timeDimensionControlOptions);
+            map.addControl(timeDimensionControl);
+
+            var icon = L.icon({
+                iconUrl: 'img/running.png',
+                iconSize: [22, 22],
+                iconAnchor: [5, 25]
+            });
+
+            var customLayer = L.geoJson(null, {
+                pointToLayer: function (feature, latLng) {
+                    if (feature.properties.hasOwnProperty('last')) {
+                        return new L.Marker(latLng, {
+                            icon: icon
+                        });
+                    }
+                    return L.circleMarker(latLng);
+                }
+            });
+
+            var gpxLayer = omnivore.gpx('data/running_mallorca.gpx', null, customLayer).on('ready', function () {
+                map.fitBounds(gpxLayer.getBounds(), {
+                    paddingBottomRight: [40, 40]
+                });
+            });
+
+            var gpxTimeLayer = L.timeDimension.layer.geoJson(gpxLayer, {
+                updateTimeDimension: true,
+                addlastPoint: true,
+                waitForReady: true
+            });
+
+            var overlayMaps = {
+                "GPX Layer": gpxTimeLayer,
+            };
+
+            var controlCapas = L.control.layers(baseLayers, overlayMaps);
+            controlCapas.addTo(map);
+            gpxTimeLayer.addTo(map);
+        });
+    </script>
+
+</head>
+
+<body>
+    <div id="map" style="height: 95%; width: 100%"></div>
+</body>
+
+</html>
