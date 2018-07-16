@@ -12,10 +12,10 @@
 
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script> -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <!-- Treballar en CANVAS millora el rendiment. És un métode per rasteritzar les geometries -->
-    <script>
+    <!-- Treballar en CANVAS millora el rendiment. És un métode per rasteritzar les geometries --> -->
+    <!-- <!-- <script>
         L_PREFER_CANVAS = true; 
-    </script>
+    </script> -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.js"></script>
     <script type="text/javascript" src="https://cdn.rawgit.com/nezasa/iso8601-js-period/master/iso8601.min.js"></script>
     <!-- <script type="text/javascript" src="https://cdn.rawgit.com/socib/Leaflet.TimeDimension/master/dist/leaflet.timedimension.min.js"></script> -->
@@ -63,7 +63,7 @@
             startDate.setUTCHours(0, 0, 0, 0);
 
             var timeDimension = new L.TimeDimension({
-                period: "PT1D",
+                period: "PT5M",
             });
 
             map.timeDimension = timeDimension;
