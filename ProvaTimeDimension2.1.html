@@ -103,7 +103,7 @@
                 }
             });
 
-            var gpxLayer = omnivore.gpx('data/running_mallorca.gpx', null, customLayer).on('ready', function () {
+            var gpxLayer = omnivore.gpx('data/UTMCD_2018.gpx', null, customLayer).on('ready', function () {
                 map.fitBounds(gpxLayer.getBounds(), {
                     paddingBottomRight: [40, 40]
                 });
