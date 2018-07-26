@@ -88,11 +88,11 @@
             var timeDimensionControl = new L.Control.TimeDimension(timeDimensionControlOptions);
             map.addControl(timeDimensionControl);
 
-            var icon = L.icon({
-                iconUrl: 'img/running.png',
-                iconSize: [22, 22],
-                iconAnchor: [5, 25]
-            });
+            // var icon = L.icon({
+            //     iconUrl: 'img/running.png',
+            //     iconSize: [22, 22],
+            //     iconAnchor: [5, 25]
+            // });
 
             var customLayer = L.geoJson(null, {
                 pointToLayer: function (feature, latLng) {
@@ -105,25 +105,25 @@
                 }
             });
 
-            var gpxLayer = omnivore.gpx('data/UTMCD_2018_d2.gpx', null, customLayer).on('ready', function () {
-                map.fitBounds(gpxLayer.getBounds(), {
+            var UTMCD18_d2 = omnivore.gpx('data/UTMCD_2018_d2.gpx', null, customLayer).on('ready', function () {
+                map.fitBounds(UTMCD18_d2.getBounds(), {
                     paddingBottomRight: [40, 40]
                 });
             });
 
-            var gpxTimeLayer = L.timeDimension.layer.geoJson(gpxLayer, {
+            var UTMCD18_d2TimeLayer = L.timeDimension.layer.geoJson(UTMCD18_d2, {
                 updateTimeDimension: true,
                 addlastPoint: true,
                 waitForReady: true
             });
 
             var overlayMaps = {
-                "GPX Layer": gpxTimeLayer,
+                "UTMCD 2018 dorsal 2": UTMCD18_d2TimeLayer,
             };
 
             var controlCapas = L.control.layers(baseLayers, overlayMaps);
             controlCapas.addTo(map);
-            gpxTimeLayer.addTo(map);
+            UTMCD18_d2TimeLayer.addTo(map);
         });
     </script>
 
